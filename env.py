@@ -8,10 +8,11 @@ B_W = 3  # 棋盘宽
 UNIT = 90  # 棋盘每格大小
 P_S = 60 #棋子大小
 
+#显示类，把棋盘数据显示在屏幕
 class Cshow(tk.Tk):
     def __init__(self):
         super(Cshow, self).__init__()
-        self.title('井字棋')
+        self.title('Tom和Jerry大战井字棋（机器学习）')
         self.geometry('{0}x{1}'.format(600, 600))
         self.canvas = tk.Canvas(self, bg='white', height=600, width=600)         #生成画布
         self.redraw([[0,0,0],[0,0,0],[0,0,0]])
@@ -47,17 +48,19 @@ class Cshow(tk.Tk):
 #棋盘类（包括判断当前棋盘输赢的裁判）
 class Cboard():
     def __init__(self):
-        self.m=[]  #棋盘，蓝方为1，红方为-1，空为0
+        self.m=[[0, 0, 0], [0, 0, 0], [0, 0, 0]]  #棋盘，蓝方为1，红方为-1，空为0
         self.num_chess=0  #记录当前棋子总数量
 
     #新开局，可以自定义一个m作为残局开局
-    def renew(self,m=[[0,0,0],
-                      [0,0,0],
-                      [0,0,0]]):
+    def renew(self, m=[[0, 0, 0], [0, 0, 0], [0, 0, 0]]):
         self.m=m
 
     def getmove(self,x,y,flag): #得到（机器人）指定的点位，以此更新棋盘：x和y为坐标，flag为执蓝还是红
-        self.m[x][y] = flag
+        if self.m[x][y]==1 or self.m[x][y]==-1:
+            print('错误：指定点位已经有棋。')
+        else:
+            self.m[x][y] = flag
+            self.num_chess+=1
 
     def ref(self):  #裁判，判断目前盘面胜平和僵持（继续走棋），蓝色胜利返回1，红色胜利返回-1，平局返回0，僵持返回100
         #判断每行和每列
@@ -73,7 +76,7 @@ class Cboard():
             return self.m[0][2]
 
         #平局或者僵持
-        if self.num_chess==9:
+        if self.num_chess>=9:
             return 0
         else:
             return 100
