@@ -8,7 +8,7 @@ B_W = 3  # 棋盘宽
 UNIT = 90  # 棋盘每格大小
 P_S = 60 #棋子大小
 
-class Cenv(tk.Tk):
+class Cshow(tk.Tk):
     def __init__(self):
         super(Cenv, self).__init__()
         self.title('井字棋')
@@ -49,7 +49,38 @@ class Cenv(tk.Tk):
                                                         outline='', fill='red')
         #开始画
         self.canvas.pack()
-        ##开始监听鼠标左键.
-        #self.canvas.bind('<Button-1>', self.OnB1)
 
     #def check(self,m):
+
+#棋盘类（包括判断当前棋盘输赢的裁判）
+class Cboard():
+    def __init__(self):
+        self.m=[[0,0,0],
+                [0,0,1],
+                [0,-1,-1]]  #棋盘，蓝方为1，红方为-1，空为0
+
+    #新开局
+    def renew(self):
+        self.m=[[0,0,0],
+                [0,0,0],
+                [0,0,0]]
+
+    def ref(self):  #裁判，判断目前盘面胜平负
+        #判断每行和每列
+        for i in range(3):
+            if self.m[i][0]==self.m[i][1]==self.m[i][2]!=0:  #判断行
+                return self.m[i][2]
+            if self.m[0][i]==self.m[1][i]==self.m[2][i]!=0:  #判断列
+                return self.m[2][i]
+        #判断左右两个斜线
+        if self.m[0][0]==self.m[1][1]==self.m[2][2]!=0:
+            return self.m[2][2]
+        if self.m[2][0]==self.m[1][1]==self.m[0][2]!=0:
+            return self.m[0][2]
+
+
+
+
+
+
+
