@@ -2,6 +2,8 @@ import env
 import robot
 import time
 
+SLEEPTIME=1
+
 show=env.Cshow()
 board=env.Cboard()
 tom=robot.Crobot(1,0)
@@ -28,7 +30,7 @@ while result==100:
     elif result==0:
         print('平局')
         break
-    time.sleep(1)
+    time.sleep(SLEEPTIME)
 
     #Jerry下棋
     i += 1
@@ -46,7 +48,7 @@ while result==100:
     elif result==0:
         print('平局')
         break
-    time.sleep(1)
+    time.sleep(SLEEPTIME)
 
 print('游戏结束')
 

@@ -77,9 +77,9 @@ class Cboard():
 
         #平局或者僵持
         if self.num_chess>=9:
-            return 0
+            return 0  #平局
         else:
-            return 100
+            return 100  #表示棋还在僵持中胜负未定，可以继续下
 
 
 
