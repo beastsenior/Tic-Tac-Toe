@@ -58,6 +58,7 @@ class Cboard():
         self.m=[[0,0,0],
                 [0,0,1],
                 [0,-1,-1]]  #棋盘，蓝方为1，红方为-1，空为0
+        self.num_chess=0  #记录当前棋子总数量
 
     #新开局
     def renew(self):
@@ -65,7 +66,7 @@ class Cboard():
                 [0,0,0],
                 [0,0,0]]
 
-    def ref(self):  #裁判，判断目前盘面胜平负
+    def ref(self):  #裁判，判断目前盘面胜平和僵持（继续走棋），蓝色胜利返回1，红色胜利返回-1，平局返回0，僵持返回100
         #判断每行和每列
         for i in range(3):
             if self.m[i][0]==self.m[i][1]==self.m[i][2]!=0:  #判断行
@@ -77,6 +78,12 @@ class Cboard():
             return self.m[2][2]
         if self.m[2][0]==self.m[1][1]==self.m[0][2]!=0:
             return self.m[0][2]
+
+        #平局或者僵持
+        if self.num_chess==9:
+            return 0
+        else:
+            return 100
 
 
 
