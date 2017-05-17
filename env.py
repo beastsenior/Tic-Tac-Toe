@@ -1,5 +1,4 @@
 import tkinter as tk
-#import time
 
 BLANK_H = 150 #棋盘上端空白
 BLANK_W = 150 #棋盘左端空白
@@ -43,6 +42,7 @@ class Cshow(tk.Tk):
                                                         outline='', fill='red')
         #开始画
         self.canvas.pack()
+        self.update()
 
 
 #棋盘类（包括判断当前棋盘输赢的裁判）

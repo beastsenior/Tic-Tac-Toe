@@ -1,5 +1,6 @@
 import env
 import robot
+import time
 
 show=env.Cshow()
 board=env.Cboard()
@@ -19,14 +20,15 @@ while result==100:
     show.redraw(board.m)
     result=board.ref()
     if result==1:
-        print('蓝色胜')
+        print('蓝棋胜')
         break
     elif result==-1:
-        print('红色胜')
+        print('红棋胜')
         break
     elif result==0:
         print('平局')
         break
+    time.sleep(1)
 
     #Jerry下棋
     i += 1
@@ -36,18 +38,16 @@ while result==100:
     show.redraw(board.m)
     result=board.ref()
     if result==1:
-        print('蓝色胜')
+        print('蓝棋胜')
         break
     elif result==-1:
-        print('红色胜')
+        print('红棋胜')
         break
     elif result==0:
         print('平局')
         break
+    time.sleep(1)
 
 print('游戏结束')
-
-
-#print(board.m)
 
 show.mainloop()
