@@ -10,7 +10,7 @@ P_S = 60 #棋子大小
 
 class Cshow(tk.Tk):
     def __init__(self):
-        super(Cenv, self).__init__()
+        super(Cshow, self).__init__()
         self.title('井字棋')
         self.geometry('{0}x{1}'.format(600, 600))
         self.redraw([[0,0,0],
@@ -18,13 +18,14 @@ class Cshow(tk.Tk):
                      [1,-1,0]])
 
     def redraw(self,m):
-        try:
-            self.canvas.delete("all")  #清空画布
-        except:
-            pass
+        # try:
+        #     self.canvas.delete("all")  #清空画布
+        # except:
+        #     pass
 
         #画布
         self.canvas = tk.Canvas(self, bg='white', height=600, width=600)
+        self.canvas.delete("all")  # 清空画布
         #棋盘
         for c in range(BLANK_W, BLANK_W+(B_W+1)* UNIT, UNIT):
             x0, y0, x1, y1 = c, BLANK_H, c, BLANK_H+B_H* UNIT
@@ -55,16 +56,14 @@ class Cshow(tk.Tk):
 #棋盘类（包括判断当前棋盘输赢的裁判）
 class Cboard():
     def __init__(self):
-        self.m=[[0,0,0],
-                [0,0,1],
-                [0,-1,-1]]  #棋盘，蓝方为1，红方为-1，空为0
+        self.m=[]  #棋盘，蓝方为1，红方为-1，空为0
         self.num_chess=0  #记录当前棋子总数量
 
-    #新开局
-    def renew(self):
-        self.m=[[0,0,0],
-                [0,0,0],
-                [0,0,0]]
+    #新开局，可以自定义一个m作为残局开局
+    def renew(self,m=[[0,0,0],
+                      [0,0,0],
+                      [0,0,0]]):
+        self.m=m
 
     def ref(self):  #裁判，判断目前盘面胜平和僵持（继续走棋），蓝色胜利返回1，红色胜利返回-1，平局返回0，僵持返回100
         #判断每行和每列
