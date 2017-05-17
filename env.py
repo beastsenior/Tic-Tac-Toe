@@ -13,27 +13,19 @@ class Cshow(tk.Tk):
         super(Cshow, self).__init__()
         self.title('井字棋')
         self.geometry('{0}x{1}'.format(600, 600))
-        self.redraw([[0,0,0],
-                     [1,0,0],
-                     [1,-1,0]])
+        self.canvas = tk.Canvas(self, bg='white', height=600, width=600)         #生成画布
+        self.redraw([[0,0,0],[0,0,0],[0,0,0]])
 
     def redraw(self,m):
-        # try:
-        #     self.canvas.delete("all")  #清空画布
-        # except:
-        #     pass
-
-        #画布
-        self.canvas = tk.Canvas(self, bg='white', height=600, width=600)
         self.canvas.delete("all")  # 清空画布
-        #棋盘
+        #设定棋盘
         for c in range(BLANK_W, BLANK_W+(B_W+1)* UNIT, UNIT):
             x0, y0, x1, y1 = c, BLANK_H, c, BLANK_H+B_H* UNIT
             self.canvas.create_line(x0, y0, x1, y1,width=2)
         for r in range(BLANK_H, BLANK_H+(B_H+1)* UNIT, UNIT):
             x0, y0, x1, y1 = BLANK_W, r, BLANK_W+B_W* UNIT, r
             self.canvas.create_line(x0, y0, x1, y1,width=2)
-        #棋子
+        #设定棋子
         for c in range(0,B_H):
             for r in range(0,B_W):
                 if m[c][r]==1:
@@ -51,7 +43,6 @@ class Cshow(tk.Tk):
         #开始画
         self.canvas.pack()
 
-    #def check(self,m):
 
 #棋盘类（包括判断当前棋盘输赢的裁判）
 class Cboard():
@@ -64,6 +55,9 @@ class Cboard():
                       [0,0,0],
                       [0,0,0]]):
         self.m=m
+
+    def getmove(self,x,y,flag): #得到（机器人）指定的点位，以此更新棋盘：x和y为坐标，flag为执蓝还是红
+        self.m[x][y] = flag
 
     def ref(self):  #裁判，判断目前盘面胜平和僵持（继续走棋），蓝色胜利返回1，红色胜利返回-1，平局返回0，僵持返回100
         #判断每行和每列
