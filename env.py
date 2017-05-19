@@ -1,12 +1,5 @@
 import tkinter as tk
 
-BLANK_H = 150 #棋盘上端空白
-BLANK_W = 150 #棋盘左端空白
-B_H = 3  # 棋盘高
-B_W = 3  # 棋盘宽
-UNIT = 90  # 棋盘每格大小
-P_S = 60 #棋子大小
-
 #显示类，把棋盘数据显示在屏幕
 class Cshow(tk.Tk):
     def __init__(self):
@@ -19,6 +12,12 @@ class Cshow(tk.Tk):
     def redraw(self,m):
         self.canvas.delete("all")  # 清空画布
         #设定棋盘
+        BLANK_H = 150  # 棋盘上端空白
+        BLANK_W = 150  # 棋盘左端空白
+        B_H = 3  # 棋盘高
+        B_W = 3  # 棋盘宽
+        UNIT = 90  # 棋盘每格大小
+        P_S = 60  # 棋子大小
         for c in range(BLANK_W, BLANK_W+(B_W+1)* UNIT, UNIT):
             x0, y0, x1, y1 = c, BLANK_H, c, BLANK_H+B_H* UNIT
             self.canvas.create_line(x0, y0, x1, y1,width=2)
@@ -57,10 +56,11 @@ class Cboard():
 
     def getmove(self,x,y,flag): #得到（机器人）指定的点位，以此更新棋盘：x和y为坐标，flag为执蓝还是红
         if self.m[x][y]==1 or self.m[x][y]==-1:
-            print('错误：指定点位已经有棋。')
+            return -0.5  #犯规，指定点位已经有棋。返回一个大的惩罚-0.5
         else:
             self.m[x][y] = flag
             self.num_chess+=1
+            return 0.
 
     def ref(self):  #裁判，判断目前盘面胜平和僵持（继续走棋），蓝色胜利返回1，红色胜利返回-1，平局返回0，僵持返回100
         #判断每行和每列
