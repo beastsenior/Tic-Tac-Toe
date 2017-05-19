@@ -1,16 +1,19 @@
 import tensorflow as tf
 import numpy as np
 
+np.random.seed()
+tf.set_random_seed(1)
+
 #大脑类，DQN作为机器人的大脑
 class Cbrain:
     def __init__(
             self,
-            n_cell=10,
+            n_cell=20,
             n_actions=9,
             n_features=9,
             learning_rate=0.01,
             reward_decay=0.9,
-            e_greedy=0.9,
+            e_greedy=0.1,  #要不要选最大action值
             replace_target_iter=300,
             memory_size=500,
             batch_size=32,

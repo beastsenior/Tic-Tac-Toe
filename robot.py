@@ -29,11 +29,9 @@ class Crobot():
         #if movemode==2:
 
     def brain_random(self, s):  # 随机模式
-        print(s)
         while 1:
             x = random.randrange(0, 3)
             y = random.randrange(0, 3)
-            print(x,y)
             if s[x*3+y] == 0.:
                 return x, y
 

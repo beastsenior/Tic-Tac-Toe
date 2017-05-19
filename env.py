@@ -51,8 +51,9 @@ class Cboard():
         self.num_chess=0  #记录当前棋子总数量
 
     #新开局，可以自定义一个m作为残局开局
-    def renew(self, m=[[0, 0, 0], [0, 0, 0], [0, 0, 0]]):
-        self.m=m
+    def renew(self, m):
+        self.m=m.copy()
+        self.num_chess=0
 
     def getmove(self,x,y,flag): #得到（机器人）指定的点位，以此更新棋盘：x和y为坐标，flag为执蓝还是红
         if self.m[x][y]==1 or self.m[x][y]==-1:
