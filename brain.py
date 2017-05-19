@@ -8,14 +8,14 @@ tf.set_random_seed(1)
 class Cbrain:
     def __init__(
             self,
-            n_cell=20,
+            n_cell=50,
             n_actions=9,
             n_features=9,
             learning_rate=0.01,
             reward_decay=0.9,
-            e_greedy=0.1,  #要不要选最大action值
-            replace_target_iter=300,
-            memory_size=500,
+            e_greedy=0.9,  #要不要选最大action值
+            replace_target_iter=200,
+            memory_size=4000,
             batch_size=32,
             e_greedy_increment=None,
             output_graph=False,

@@ -10,19 +10,19 @@ plt.ion()
 plt.show()
 
 SLEEPTIME=0  #休息时间（下慢点方便人类观看）
-N_C=20000  #一共下多少盘
+N_C=10000  #一共下多少盘
 
 show=env.Cshow()
 board=env.Cboard()
 tom=robot.Crobot(1,1)
 jerry=robot.Crobot(-1,0)
 
-r_sum_time=20
+#画图用的值
 r_sum=0
 x_values = []
 y_values = []
 
-
+#统计记录
 n_blue_win=0 #统计蓝色胜利次数
 n_red_win=0 #统计红色胜利次数
 n_draw=0  #统计平局次数
@@ -30,8 +30,8 @@ save_r=[0.]*N_C  #记录每一局的r情况
 
 for C in range(N_C):
     #画图
-    if C % r_sum_time == 0 and C!=0:
-        x_values.append(C/r_sum_time)
+    if C % (N_C/1000) == 0 and C!=0:
+        x_values.append(C/(N_C/100))
         y_values.append(r_sum)
         try:
             ax.lines.remove(lines[0])
@@ -42,9 +42,15 @@ for C in range(N_C):
         #plt.pause(1)
 
     #下棋
-    tom.brain_dqn_train.epsilon = 0.1+ C / N_C
-    if tom.brain_dqn_train.epsilon>=1.0:
-       tom.brain_dqn_train.epsilon=1.0
+    #if C/N_C>0.9:
+    if C>6000:
+        tom.brain_dqn_train.epsilon = 1.0
+    # if C>20000:
+    #     tom.brain_dqn_train.epsilon=0.99
+    # else:
+    #     tom.brain_dqn_train.epsilon = 0.1+ C / N_C
+    #     if tom.brain_dqn_train.epsilon>=1.0:
+    #        tom.brain_dqn_train.epsilon=1.0
     # if C>7000:
     #     tom.brain_dqn_train.epsilon = 0.8
     i = 0
@@ -75,11 +81,12 @@ for C in range(N_C):
                 end_flag=True
             elif result==-1:  #下输了和僵持奖励为0
                 n_red_win+=1
+                r=-0.3  #下输惩罚为-0.3
                 print('红棋胜')
                 end_flag = True
             elif result==0:
                 n_draw+=1
-                r=0.1  #下平了奖励为0.1
+                r=0.0  #下平了奖励为0.0
                 print('平局')
                 end_flag = True
             time.sleep(SLEEPTIME)
@@ -100,11 +107,12 @@ for C in range(N_C):
                 end_flag = True
             elif result==-1:
                 n_red_win+=1
+                r=-0.3  #下输惩罚为-0.3
                 print('红棋胜')
                 end_flag = True
             elif result==0:
                 n_draw+=1
-                r=0.1  #下平了奖励为0.1
+                r=0.0  #下平了奖励为0.0
                 print('平局')
                 end_flag = True
             time.sleep(SLEEPTIME)
@@ -119,5 +127,6 @@ for C in range(N_C):
             print('蓝旗胜',n_blue_win,'次:','红棋胜',n_red_win,'次:','平局',n_draw,'次')
             break
 
+print('最高分应为：',(N_C/1000)*0.3)
 print('胜负总览：',save_r)
 show.mainloop()
