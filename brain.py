@@ -48,6 +48,16 @@ class Cbrain:
         self.sess.run(tf.global_variables_initializer())
         self.cost_his = []
 
+    def m2s(self,m):
+        # 把棋盘局面m转化为神经网络识别的float形式
+        s = np.zeros(9, dtype=np.float32)
+        k = 0
+        for i in range(3):
+            for j in range(3):
+                s[k] = np.float32(m[i][j]) / 2
+                k += 1
+        return s
+
     def _build_net(self):
         def build_layers(s, c_names, n_l1, w_initializer, b_initializer):
             with tf.variable_scope('l1'):
@@ -62,8 +72,8 @@ class Cbrain:
             return out
 
         # ------------------ all inputs ------------------------
-        self.s = tf.placeholder(tf.int32, [None, self.n_features], name='s')  # input State
-        self.s_ = tf.placeholder(tf.int32, [None, self.n_features], name='s_')  # input Next State
+        self.s = tf.placeholder(tf.float32, [None, self.n_features], name='s')  # input State
+        self.s_ = tf.placeholder(tf.float32, [None, self.n_features], name='s_')  # input Next State
         self.r = tf.placeholder(tf.float32, [None, ], name='r')  # input Reward
         self.a = tf.placeholder(tf.int32, [None, ], name='a')  # input Action
 

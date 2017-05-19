@@ -23,8 +23,8 @@ for C in range(N_C):
 
         #Tom下棋
         i += 1
-        s=board.m  #记录前一个状态
-        x1,y1,flag=tom.move(board.m)
+        s=tom.brain_dqn_train.m2s(board.m)  #记录前一个状态
+        x1,y1,flag=tom.move(s)
         print(i,'setp : (',x1,y1,')',flag)
         r=board.getmove(x1,y1,flag)
         if r!=0.:
@@ -50,7 +50,8 @@ for C in range(N_C):
 
         #Jerry下棋
         i += 1
-        x2, y2, flag = jerry.move(board.m)
+        s_tmp = tom.brain_dqn_train.m2s(board.m)  # 记录前一个状态
+        x2, y2, flag = jerry.move(s_tmp)
         print(i,'setp : (',x2,y2,')',flag)
         board.getmove(x2,y2,flag)
         show.redraw(board.m)
@@ -71,9 +72,9 @@ for C in range(N_C):
             break
         time.sleep(SLEEPTIME)
 
-    tom.brain_dqn_train.store_transition(s, x1 * 3 + y1, r, board.m)  # 参数分别为(s,a,r,s_)
-    if (C > 200) and (C % 5 == 0):
-        tom.brain_dqn_train.learn()
+        tom.brain_dqn_train.store_transition(s, x1 * 3 + y1, r, tom.brain_dqn_train.m2s(board.m))  # 参数分别为(s,a,r,s_)
+        if (C > 200) and (C % 5 == 0):
+            tom.brain_dqn_train.learn()
     save_r[C]=r
     print('第',C,'幕游戏结束！')
     print('蓝旗胜',n_blue_win,'次:','红棋胜',n_red_win,'次:','平局',n_draw,'次')
