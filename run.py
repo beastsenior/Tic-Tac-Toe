@@ -19,6 +19,7 @@ jerry=robot.Crobot(-1,0)
 
 #画图用的值
 r_sum=0
+n_foul=0 #记录犯规次数（r=-0.9的情况）
 x_values = []
 y_values = []
 
@@ -30,9 +31,9 @@ save_r=[0.]*N_C  #记录每一局的r情况
 
 for C in range(N_C):
     #画图
-    if C % (N_C/1000) == 0 and C!=0:
+    if C % (N_C/200) == 0 and C!=0:
         x_values.append(C/(N_C/100))
-        y_values.append(r_sum)
+        y_values.append(r_sum*10)
         try:
             ax.lines.remove(lines[0])
         except Exception:
@@ -43,16 +44,16 @@ for C in range(N_C):
 
     #下棋
     #if C/N_C>0.9:
-    if C>6000:
-        tom.brain_dqn_train.epsilon = 1.0
+    # if C>=0:
+    #     tom.brain_dqn_train.epsilon = 1.0
     # if C>20000:
     #     tom.brain_dqn_train.epsilon=0.99
     # else:
     #     tom.brain_dqn_train.epsilon = 0.1+ C / N_C
     #     if tom.brain_dqn_train.epsilon>=1.0:
     #        tom.brain_dqn_train.epsilon=1.0
-    # if C>7000:
-    #     tom.brain_dqn_train.epsilon = 0.8
+    if C>9000:
+        tom.brain_dqn_train.epsilon = 1.0
     i = 0
     result=100
     board.renew([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
@@ -81,12 +82,12 @@ for C in range(N_C):
                 end_flag=True
             elif result==-1:  #下输了和僵持奖励为0
                 n_red_win+=1
-                r=-0.3  #下输惩罚为-0.3
+                #r=-0.3  #下输惩罚为-0.3
                 print('红棋胜')
                 end_flag = True
             elif result==0:
                 n_draw+=1
-                r=0.0  #下平了奖励为0.0
+                r=0.1  #下平了奖励为0.0
                 print('平局')
                 end_flag = True
             time.sleep(SLEEPTIME)
@@ -107,12 +108,12 @@ for C in range(N_C):
                 end_flag = True
             elif result==-1:
                 n_red_win+=1
-                r=-0.3  #下输惩罚为-0.3
+                #r=-0.3  #下输惩罚为-0.3
                 print('红棋胜')
                 end_flag = True
             elif result==0:
                 n_draw+=1
-                r=0.0  #下平了奖励为0.0
+                r=0.1  #下平了奖励为0.0
                 print('平局')
                 end_flag = True
             time.sleep(SLEEPTIME)
@@ -123,10 +124,14 @@ for C in range(N_C):
         if end_flag==True:
             r_sum+=r
             save_r[C]=r
+            if r==-0.9:
+                n_foul+=1
             print('第',C+1,'幕游戏结束！')
             print('蓝旗胜',n_blue_win,'次:','红棋胜',n_red_win,'次:','平局',n_draw,'次')
             break
 
+
 print('最高分应为：',(N_C/1000)*0.3)
 print('胜负总览：',save_r)
+print('犯规数：',n_foul)
 show.mainloop()

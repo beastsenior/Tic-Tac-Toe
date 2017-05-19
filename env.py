@@ -57,7 +57,7 @@ class Cboard():
 
     def getmove(self,x,y,flag): #得到（机器人）指定的点位，以此更新棋盘：x和y为坐标，flag为执蓝还是红
         if self.m[x][y]==1 or self.m[x][y]==-1:
-            return -0.3  #犯规，指定点位已经有棋。返回一个大的惩罚-0.3
+            return -0.9  #犯规，指定点位已经有棋。返回一个大的惩罚-0.3
         else:
             self.m[x][y] = flag
             self.num_chess+=1

@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import time
 
 np.random.seed()
 tf.set_random_seed(1)
@@ -8,14 +9,14 @@ tf.set_random_seed(1)
 class Cbrain:
     def __init__(
             self,
-            n_cell=50,
+            n_cell=100,
             n_actions=9,
             n_features=9,
             learning_rate=0.01,
             reward_decay=0.9,
             e_greedy=0.9,  #要不要选最大action值
             replace_target_iter=200,
-            memory_size=4000,
+            memory_size=500,
             batch_size=32,
             e_greedy_increment=None,
             output_graph=False,
@@ -57,7 +58,7 @@ class Cbrain:
         k = 0
         for i in range(3):
             for j in range(3):
-                s[k] = np.float32(m[i][j]) / 2
+                s[k] = np.float32(m[i][j]/2)
                 k += 1
         return s
 
@@ -87,12 +88,16 @@ class Cbrain:
                 ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], self.n_cell, \
                 tf.random_normal_initializer(0., 0.3), tf.constant_initializer(0.1)  # config of layers
             self.q_eval = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer)
+            #self.q_tmp1 = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer)
+            #self.q_eval=self.q_tmp1-tf.multiply(tf.abs(self.s),100000.0)
 
         # ------------------ build target_net ------------------
         with tf.variable_scope('target_net'):
             # c_names(collections_names) are the collections to store variables
             c_names = ['target_net_params', tf.GraphKeys.GLOBAL_VARIABLES]
             self.q_next = build_layers(self.s_, c_names, n_l1, w_initializer, b_initializer)
+            #self.q_tmp2= build_layers(self.s_, c_names, n_l1, w_initializer, b_initializer)
+            #self.q_next=self.q_tmp2-tf.multiply(tf.abs(self.s_),100000.0)
 
         with tf.variable_scope('q_target'):
             q_target = self.r + self.gamma * tf.reduce_max(self.q_next, axis=1, name='Qmax_s_')    # shape=(None, )
@@ -116,16 +121,26 @@ class Cbrain:
         self.memory[index, :] = transition
         self.memory_counter += 1
 
-    def choose_action(self, observation):
+    def choose_action(self, observation_o):
         # to have batch dimension when feed into tf placeholder
-        observation = observation[np.newaxis, :]
+        observation = observation_o[np.newaxis, :]
+        action=0
 
         if np.random.uniform() < self.epsilon:
             # forward feed the observation and get q value for every actions
             actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
-            action = np.argmax(actions_value)
+            #action = np.argmax(actions_value)
+            action = np.argmax(actions_value-np.abs(observation_o)*10000.0)
+
+            if observation[:,action]!=0:
+                print('s:',observation)
+                print('a:',action)
+                print('actions_value',actions_value)
+                #print('self.q_eval=self.q_tmp1-tf.multiply(self.q_tmp1,tf.multiply(tf.abs(self.s),2)):',self.sess.run([self.q_tmp1,self.q_eval],feed_dict={self.s: observation}))
+                time.sleep(200)
         else:
-            action = np.random.randint(0, self.n_actions)
+            while(observation[:,action]!=0):
+                action = np.random.randint(0, self.n_actions)
         return action
 
     def _replace_target_params(self):
