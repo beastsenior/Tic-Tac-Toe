@@ -14,7 +14,7 @@ N_C=10000  #一共下多少盘
 
 show=env.Cshow()
 board=env.Cboard()
-tom=robot.Crobot(1,1)
+tom=robot.Crobot(1,2)
 jerry=robot.Crobot(-1,0)
 
 #画图用的值
@@ -31,9 +31,10 @@ save_r=[0.]*N_C  #记录每一局的r情况
 
 for C in range(N_C):
     #画图
-    if C % (N_C/200) == 0 and C!=0:
+    #if C % (N_C/200) == 0 and C!=0:
+    if C % 50 == 0:
         x_values.append(C/(N_C/100))
-        y_values.append(r_sum*10)
+        y_values.append(r_sum)
         try:
             ax.lines.remove(lines[0])
         except Exception:
@@ -52,19 +53,18 @@ for C in range(N_C):
     #     tom.brain_dqn_train.epsilon = 0.1+ C / N_C
     #     if tom.brain_dqn_train.epsilon>=1.0:
     #        tom.brain_dqn_train.epsilon=1.0
-    if C>9000:
-        tom.brain_dqn_train.epsilon = 1.0
+    # if C>9000:
+    #     tom.brain_dqn_train.epsilon = 1.0
     i = 0
     result=100
     board.renew([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
-    print('board.renew',board.m)
     r=0.
     end_flag=False  #判断棋局是否结束
     show.redraw(board.m)
     while result==100:
         #Tom下棋
         i += 1
-        s=tom.brain_dqn_train.m2s(board.m)  #记录前一个状态
+        s=tom.m2s(board.m)  #记录前一个状态
         x1,y1,flag=tom.move(s)
         print(i,'setp : (',x1,y1,')',flag)
         r=board.getmove(x1,y1,flag)
@@ -95,7 +95,7 @@ for C in range(N_C):
         if end_flag==False:
             #Jerry下棋
             i += 1
-            s_tmp = tom.brain_dqn_train.m2s(board.m)
+            s_tmp = jerry.m2s(board.m)
             x2, y2, flag = jerry.move(s_tmp)
             print(i,'setp : (',x2,y2,')',flag)
             board.getmove(x2,y2,flag)
@@ -118,9 +118,9 @@ for C in range(N_C):
                 end_flag = True
             time.sleep(SLEEPTIME)
 
-        tom.brain_dqn_train.store_transition(s, x1 * 3 + y1, r, tom.brain_dqn_train.m2s(board.m))  # 参数分别为(s,a,r,s_)
+        tom.brain_dqn_train_sv.store_transition(s, x1 * 3 + y1, r, tom.m2s(board.m))  # 参数分别为(s,a,r,s_)
         if (C > 200) and (C % 5 == 0):
-            tom.brain_dqn_train.learn()
+            tom.brain_dqn_train_sv.learn()
         if end_flag==True:
             r_sum+=r
             save_r[C]=r
@@ -131,7 +131,7 @@ for C in range(N_C):
             break
 
 
-print('最高分应为：',(N_C/1000)*0.3)
+# print('最高分应为：',(N_C/1000)*0.3)
 print('胜负总览：',save_r)
 print('犯规数：',n_foul)
 show.mainloop()

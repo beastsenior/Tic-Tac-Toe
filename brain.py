@@ -9,7 +9,7 @@ tf.set_random_seed(1)
 class Cbrain:
     def __init__(
             self,
-            n_cell=100,
+            n_cell=20,
             n_actions=9,
             n_features=9,
             learning_rate=0.01,
@@ -22,7 +22,7 @@ class Cbrain:
             output_graph=False,
     ):
         self.n_cell=n_cell  #神经节点数量
-        self.n_actions = n_actions
+        self.n_actions = n_actions #动作数量
         self.n_features = n_features
         self.lr = learning_rate
         self.gamma = reward_decay
@@ -52,16 +52,6 @@ class Cbrain:
         self.sess.run(tf.global_variables_initializer())
         self.cost_his = []
 
-    def m2s(self,m):
-        # 把棋盘局面m转化为神经网络识别的float形式
-        s = np.zeros(9, dtype=np.float32)
-        k = 0
-        for i in range(3):
-            for j in range(3):
-                s[k] = np.float32(m[i][j]/2)
-                k += 1
-        return s
-
     def _build_net(self):
         def build_layers(s, c_names, n_l1, w_initializer, b_initializer):
             with tf.variable_scope('l1'):
@@ -69,9 +59,16 @@ class Cbrain:
                 b1 = tf.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names)
                 l1 = tf.nn.relu(tf.matmul(s, w1) + b1)
 
+            # with tf.variable_scope('l2'):
+            #     w1 = tf.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names)
+            #     b1 = tf.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names)
+            #     l1 = tf.nn.relu(tf.matmul(s, w1) + b1)
+
             with tf.variable_scope('l2'):
-                w2 = tf.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names)
-                b2 = tf.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names)
+                #w2 = tf.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names)
+                #b2 = tf.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names)
+                w2 = tf.get_variable('w2', [n_l1, 1], initializer=w_initializer, collections=c_names)
+                b2 = tf.get_variable('b2', [1, 1], initializer=b_initializer, collections=c_names)
                 out = tf.matmul(l1, w2) + b2
             return out
 
@@ -142,6 +139,13 @@ class Cbrain:
             while(observation[:,action]!=0):
                 action = np.random.randint(0, self.n_actions)
         return action
+
+    def get_value(self,observation_o):
+        # to have batch dimension when feed into tf placeholder
+        observation = observation_o[np.newaxis, :]
+
+        scene_value=self.sess.run(self.q_eval, feed_dict={self.s: observation})
+        return scene_value[0,0]
 
     def _replace_target_params(self):
         t_params = tf.get_collection('target_net_params')
